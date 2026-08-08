@@ -1,4 +1,3 @@
-
 # AWS Serverless Web Application with Web Identity Federation
 
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
@@ -46,10 +45,10 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 ├── Architecture/
 │   └── architecture.png                     # System Architecture Diagram
 ├── Documents/
-│   ├── 01-google-oauth-setup.png            # Google OAuth 2.0 Client Credentials
-│   ├── 02-cognito-identity-pool.png         # Cognito Identity Pool Overview
-│   ├── 03-iam-role-policy.png               # IAM Authenticated Role & S3 Policy
-│   └── 04-browser-console-success.png       # DevTools Console & Image Retrieval Verification
+│   ├── 01-google-oauth-setup.png            # Google OAuth 2.0 Client Credentials Confirmation
+│   ├── 02-cognito-identity-pool.png         # Cognito Identity Pool Overview & Pool ID
+│   ├── 03-iam-role-policy.png               # IAM Authenticated Role & S3 Inline Policy View
+│   └── 04-browser-console-success.png       # DevTools Console Logs & Private Image Retrieval
 ├── Templates/
 │   └── S3-Cognito-Federation.yaml           # CloudFormation / Infrastructure as Code
 └── Source Files/
@@ -64,39 +63,54 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 
 ### Step 1: Google OAuth 2.0 Client Setup
 
-1. Navigate to the **Google Cloud Console** > **APIs & Services** > **Credentials**.
-2. Create an **OAuth 2.0 Client ID** configured as a Web Application.
-3. Add your static S3 hosting domain to **Authorized JavaScript origins** and **Authorized redirect URIs**.
-4. Save your generated Client ID and Client Secret.
+1. Open the **Google Cloud Console** and navigate to **APIs & Services** > **Credentials**.
+2. Click **Create Credentials** > **OAuth client ID** and set the Application type to **Web application**.
+3. Add your S3 static website endpoint or CloudFront distribution domain under **Authorized JavaScript origins** and **Authorized redirect URIs**.
+4. Click **Create** to generate your Client ID and Client Secret.
+
 ![Google OAuth Setup](Documents/01-google-oauth-setup.png)
+The *"OAuth client created"* confirmation dialog displaying active Client ID, Client Secret field, and creation date.
+
+
 ---
 
 ### Step 2: Configure Amazon Cognito Identity Pool
 
-1. In the AWS Console, navigate to **Amazon Cognito** > **Identity Pools**.
-2. Create a new Identity Pool (e.g., `PetIDFServerlessAppPool`) and enable **Authenticated Access**.
-3. Under **Authentication Providers**, select **Google** and enter your Google Client ID.
-4. Note your generated **Identity Pool ID** (`us-east-1:...`) for frontend configuration.
+1. In the AWS Console, navigate to **Amazon Cognito** > **Identity Pools** and click **Create identity pool**.
+2. Select **Authenticated access** and choose **Google** as your authentication provider.
+3. Paste the **Google Client ID** generated in Step 1 into the provider settings.
+4. Name the pool `PetIDFServerlessAppPool` and complete the setup wizard.
+
 ![Cognito Identity Pool Configuration](Documents/02-cognito-identity-pool.png)
+
+The *Identity pool overview* dashboard showing active pool name `PetIDFServerlessAppPool` and generated **Identity Pool ID** (`us-east-1:13ab59f6-ca68-496c-a83a-0b4b2b8092f4`).
+
 ---
 
 ### Step 3: Configure IAM Role & Policy
 
-1. Attach a custom inline policy (`PrivatePatchesPermissions`) to your Cognito Authenticated IAM Role (`PetIDFServerlessAppPoolAuth_Role`).
-2. Enforce least-privilege permissions granting `s3:ListBucket` and `s3:GetObject` only to your private bucket:
+1. Navigate to **AWS IAM** > **Roles** and locate the authenticated role created by Cognito (`PetIDFServerlessAppPoolAuth_Role`).
+2. Click **Add permissions** > **Create inline policy** to define access permissions for your target private S3 bucket.
+3. Name the policy `PrivatePatchesPermissions` and configure least-privilege permissions allowing `s3:ListBucket` and `s3:GetObject`:
 
 ![IAM Role & Policy Configuration](Documents/03-iam-role-policy.png)
 
----
-### Step 4: Deploy Frontend & Verify Token Exchange
+The IAM Role summary page showing `PrivatePatchesPermissions` attached under *Permissions policies*, along with the active JSON policy statement viewer.
 
-1. Update `Source Files/scripts.js` with your region, Cognito Identity Pool ID, and Google Client ID.
+---
+
+### Step 4: Deploy Frontend & Test Web Identity Federation
+
+1. Open `Source Files/scripts.js` locally and update it with your AWS Region, **Cognito Identity Pool ID**, and **Google Client ID**.
 2. Upload `index.html` and `scripts.js` to your public S3 static web hosting bucket.
-3. Access your web app, log in via Google, and inspect the browser Developer Tools console to verify:
-* Decoding of the signed Google JWT Token.
-* Exchange of Google Token for temporary Cognito Identity ID and STS AWS credentials.
-* Generation of S3 pre-signed URLs to stream private S3 objects (e.g., `patches1.jpg`) into the UI.
+3. Access your web app in the browser, click **Sign in with Google**, and open **Developer Tools (F12)** to inspect the execution flow.
+   
 ![Browser Console Verification & Application Success](Documents/04-browser-console-success.png)
+
+The split-screen verification showing the authenticated user ("Sign in as Kriti") rendering the retrieved cat image (Patches), while the browser DevTools console logs confirm:
+> * Decoding of the signed Google JWT Token.
+> * Token exchange for temporary Cognito Credentials (`us-east-1:6c79d280...`).
+> * Successful S3 listing and signed URL generation for private objects (`patches1.jpg`).
 
 ---
 
@@ -116,13 +130,11 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 * **IMDSv1:** Uses basic, stateless HTTP GET requests; vulnerable to local Server-Side Request Forgery (SSRF) vulnerabilities.
 * **IMDSv2:** Uses session-oriented HTTP calls requiring a token (`PUT` request first) to protect against SSRF attacks.
 
-
-
 ---
 
 ## 🔒 Security & Privacy Notice
 
-All sensitive fields including AWS Account IDs, IAM Role ARNs, Google Client Secrets, and user identity credentials shown in screenshots (`Documents/`) have been sanitized in compliance with cloud security best practices.
+All sensitive account identifiers, including AWS Account IDs, IAM Role ARNs, Google Client Secrets, and user login credentials shown in repository documentation screenshots (`Documents/`) have been sanitized in compliance with cloud security standards.
 
 ---
 
