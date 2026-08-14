@@ -22,7 +22,7 @@ function credentialExchange(googleToken) {
     console.log("Exchanging Google Token for AWS credentials...");
     AWS.config.region = 'us-east-1'; 
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: 'us-east-1:3004a901-09ba-41b2-a7c3-9e486ae15096', // MAKE SURE YOU REPLACE THIS
+      IdentityPoolId: 'us-east-1:xxxx', // MAKE SURE YOU REPLACE THIS
       Logins: {
         'accounts.google.com': googleToken.credential
       }
