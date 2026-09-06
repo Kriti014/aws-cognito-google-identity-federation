@@ -138,10 +138,5 @@ All sensitive account identifiers, including AWS Account IDs, IAM Role ARNs, Goo
 
 ---
 
-## 📜 License
-
-This project is licensed under the MIT License.
-
-```
-
-```
+## Acknowledgments
+* Lab scenario inspired by cloud training architecture provided by [Adrian Cantrill (learn.cantrill.io)](https://learn.cantrill.io/).
