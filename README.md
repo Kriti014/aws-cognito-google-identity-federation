@@ -11,7 +11,7 @@ A production-grade, serverless web application architecture demonstrating secure
 
 ---
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 The system uses Google as an external Identity Provider (IdP) to authenticate users, exchanges the resulting OAuth ID token via Amazon Cognito Identity Pools for temporary AWS IAM credentials, and grants read-only access to specific S3 bucket prefixes.
 
@@ -29,7 +29,7 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 
 ---
 
-## 🛡️ Key Security & Architecture Concepts Demonstrated
+##  Key Security & Architecture Concepts Demonstrated
 
 * **Zero Hardcoded Secrets:** No long-lived AWS credentials exist within client-side JavaScript or server code. All access relies on short-lived AWS STS session keys.
 * **Least Privilege Access:** IAM policies explicitly scope access to exact S3 bucket paths, enforcing fine-grained user access controls.
@@ -37,7 +37,7 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```text
 .
@@ -59,7 +59,7 @@ The system uses Google as an external Identity Provider (IdP) to authenticate us
 
 ---
 
-## 🚀 Deployment & Setup Guide
+##  Deployment & Setup Guide
 
 ### Step 1: Google OAuth 2.0 Client Setup
 
@@ -114,7 +114,7 @@ The split-screen verification showing the authenticated user ("Sign in as Kriti"
 
 ---
 
-## 📌 Technical Engineering Notes
+##  Technical Engineering Notes
 
 ### 1. S3 Object Versioning & MFA Delete
 
@@ -132,7 +132,7 @@ The split-screen verification showing the authenticated user ("Sign in as Kriti"
 
 ---
 
-## 🔒 Security & Privacy Notice
+##  Security & Privacy Notice
 
 All sensitive account identifiers, including AWS Account IDs, IAM Role ARNs, Google Client Secrets, and user login credentials shown in repository documentation screenshots (`Documents/`) have been sanitized in compliance with cloud security standards.
 
